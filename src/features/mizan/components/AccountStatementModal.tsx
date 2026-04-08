@@ -495,33 +495,32 @@ export default function AccountStatementModal({
     return createPortal(
         <div className="fixed inset-0 z-[210] flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
             <div className="bg-[#0f172a] border border-slate-700 w-full max-w-[98vw] h-[96vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                {/* ── Header ── */}
-                <div className="p-4 border-b border-slate-700 bg-slate-800/50 flex items-start justify-between gap-3">
-                    <div>
-                        <div className="flex items-center gap-3 flex-wrap">
-                            <span className="text-xl font-mono font-bold text-blue-400">{account.code}</span>
-                            <span className="bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-xs font-bold uppercase">Hesap Ekstresi</span>
-                            <span className={`px-2 py-0.5 rounded text-xs font-bold uppercase ${isForexAccount ? 'bg-blue-600/20 text-blue-200 border border-blue-500/30' : 'bg-slate-700 text-slate-200 border border-slate-600'}`}>
-                                {isForexAccount ? 'Doviz Hesabi' : 'TL Hesabi'}
-                            </span>
-                            <span className={`px-2 py-0.5 rounded text-[11px] font-semibold uppercase ${accountTypeSource === 'MANUAL' ? 'bg-amber-600/20 text-amber-200 border border-amber-500/30' : 'bg-slate-700 text-slate-300 border border-slate-600'}`}>
-                                {accountTypeSource === 'MANUAL' ? 'Manuel' : 'Tahmin'}
-                            </span>
-                        </div>
-                        <h2 className="text-lg font-bold text-white mt-1">{account.name || 'Hesap Adi Yok'}</h2>
-                        <p className="text-xs text-slate-400 mt-1.5">{inferenceReason || 'Hesap tipi manuel olarak duzeltilebilir.'}</p>
-                        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                {/* ── Compact Header Row ── */}
+                <div className="px-3 py-2 border-b border-slate-700 bg-slate-800/50 flex items-center justify-between gap-3">
+                    {/* Left: Account info + type toggle */}
+                    <div className="flex items-center gap-2.5 min-w-0">
+                        <span className="text-base font-mono font-bold text-blue-400 shrink-0">{account.code}</span>
+                        <span className="bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase shrink-0">Hesap Ekstresi</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${isForexAccount ? 'bg-blue-600/20 text-blue-200 border border-blue-500/30' : 'bg-slate-700 text-slate-200 border border-slate-600'}`}>
+                            {isForexAccount ? 'Doviz' : 'TL'}
+                        </span>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase shrink-0 ${accountTypeSource === 'MANUAL' ? 'bg-amber-600/20 text-amber-200 border border-amber-500/30' : 'bg-slate-700 text-slate-300 border border-slate-600'}`}>
+                            {accountTypeSource === 'MANUAL' ? 'Manuel' : 'Tahmin'}
+                        </span>
+                        <span className="text-sm font-semibold text-white truncate" title={account.name || ''}>{account.name || '-'}</span>
+                        <p className="text-[10px] text-slate-500 truncate max-w-[200px] shrink-0 hidden lg:block" title={inferenceReason || 'Hesap tipi manuel olarak duzeltilebilir.'}>{inferenceReason || ''}</p>
+                        <div className="flex items-center gap-1 shrink-0 ml-1">
                             <button
                                 type="button"
                                 onClick={() => onAccountTypeChange?.('TL')}
-                                className={`px-3 py-1.5 rounded border text-xs font-semibold transition-colors ${!isForexAccount ? 'bg-slate-200 text-slate-900 border-slate-100' : 'bg-slate-900/60 text-slate-200 border-slate-600 hover:border-slate-400'}`}
+                                className={`px-2 py-1 rounded border text-[10px] font-semibold transition-colors ${!isForexAccount ? 'bg-slate-200 text-slate-900 border-slate-100' : 'bg-slate-900/60 text-slate-300 border-slate-600 hover:border-slate-400'}`}
                             >
                                 TL
                             </button>
                             <button
                                 type="button"
                                 onClick={() => onAccountTypeChange?.('FOREX')}
-                                className={`px-3 py-1.5 rounded border text-xs font-semibold transition-colors ${isForexAccount ? 'bg-blue-500 text-white border-blue-400' : 'bg-slate-900/60 text-slate-200 border-slate-600 hover:border-blue-400'}`}
+                                className={`px-2 py-1 rounded border text-[10px] font-semibold transition-colors ${isForexAccount ? 'bg-blue-500 text-white border-blue-400' : 'bg-slate-900/60 text-slate-300 border-slate-600 hover:border-blue-400'}`}
                             >
                                 Doviz
                             </button>
@@ -529,43 +528,41 @@ export default function AccountStatementModal({
                                 <button
                                     type="button"
                                     onClick={() => onAccountTypeChange?.('AUTO')}
-                                    className="px-3 py-1.5 rounded border border-amber-500/40 text-amber-200 text-xs font-semibold hover:bg-amber-500/10 transition-colors"
+                                    className="px-2 py-1 rounded border border-amber-500/40 text-amber-200 text-[10px] font-semibold hover:bg-amber-500/10 transition-colors"
                                 >
                                     Tahmine Don
                                 </button>
                             )}
                         </div>
                     </div>
-                    <div className="flex flex-col items-end gap-2">
-                        <div className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 min-w-[420px]">
-                            <div className="flex items-center justify-between gap-3">
-                                <p className="text-[11px] uppercase tracking-wide text-slate-400 font-semibold">
-                                    Secili Hareket ({selectedIndexes.length})
-                                </p>
-                                <p className="text-[11px] text-slate-500">Onayli Satir: {approvedCount}</p>
+
+                    {/* Right: Selection summary (compact inline) + actions */}
+                    <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-3 rounded-lg border border-slate-700 bg-slate-900/60 px-2.5 py-1.5">
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold">
+                                    Secili ({selectedIndexes.length})
+                                </span>
+                                <span className="text-[10px] text-slate-500">Onayli: {approvedCount}</span>
                             </div>
-                            <div className="grid grid-cols-3 gap-3 mt-2">
-                                <div>
-                                    <p className="text-[11px] text-slate-500">Secili Borc</p>
-                                    <p className="text-sm font-bold text-emerald-300">{formatCurrency(selectedSummary.totalDebit)}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[11px] text-slate-500">Secili Alacak</p>
-                                    <p className="text-sm font-bold text-rose-300">{formatCurrency(selectedSummary.totalCredit)}</p>
-                                </div>
-                                <div>
-                                    <p className="text-[11px] text-slate-500">Fark (B-A)</p>
-                                    <p className={`text-sm font-bold ${selectedDifference >= 0 ? 'text-blue-300' : 'text-amber-300'}`}>
-                                        {formatCurrency(Math.abs(selectedDifference))} {selectedDifference >= 0 ? '(B)' : '(A)'}
-                                    </p>
-                                </div>
+                            <div className="h-4 w-px bg-slate-700" />
+                            <div className="flex items-center gap-3">
+                                <span className="text-[10px] text-slate-500">Borc</span>
+                                <span className="text-xs font-bold text-emerald-300">{formatCurrency(selectedSummary.totalDebit)}</span>
+                                <span className="text-[10px] text-slate-500">Alacak</span>
+                                <span className="text-xs font-bold text-rose-300">{formatCurrency(selectedSummary.totalCredit)}</span>
+                                <span className="text-[10px] text-slate-500">Fark</span>
+                                <span className={`text-xs font-bold ${selectedDifference >= 0 ? 'text-blue-300' : 'text-amber-300'}`}>
+                                    {formatCurrency(Math.abs(selectedDifference))} {selectedDifference >= 0 ? '(B)' : '(A)'}
+                                </span>
                             </div>
-                            <div className="flex items-center justify-end gap-2 mt-2">
+                            <div className="h-4 w-px bg-slate-700" />
+                            <div className="flex items-center gap-1.5">
                                 <button
                                     type="button"
                                     onClick={() => void handleUndoLastApproval()}
                                     disabled={approvalHistory.length === 0 || isPersistingApprovals}
-                                    className="px-2.5 py-1.5 rounded border border-slate-600 text-slate-300 text-[11px] font-semibold hover:border-slate-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                    className="px-2 py-1 rounded border border-slate-600 text-slate-300 text-[10px] font-semibold hover:border-slate-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                                 >
                                     Geri Al
                                 </button>
@@ -573,71 +570,70 @@ export default function AccountStatementModal({
                                     type="button"
                                     onClick={() => void handleApproveSelectedRows()}
                                     disabled={selectedIndexes.length === 0 || isPersistingApprovals}
-                                    className="px-2.5 py-1.5 rounded border border-emerald-500/40 text-emerald-200 text-[11px] font-semibold hover:bg-emerald-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                                    className="px-2 py-1 rounded border border-emerald-500/40 text-emerald-200 text-[10px] font-semibold hover:bg-emerald-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                                 >
                                     Satirlari Onayla
                                 </button>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <button
-                                type="button"
-                                onClick={() => void handleDownloadExcel()}
-                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-xs font-semibold"
-                            >
-                                <Download size={14} />
-                                Excel Indir
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setIsMinimized(true)}
-                                className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-400 hover:text-white transition-colors"
-                                title="Alta Al"
-                            >
-                                <Minus size={18} />
-                            </button>
-                            <button
-                                onClick={onClose}
-                                className="p-2 hover:bg-slate-700/50 rounded-lg text-slate-400 hover:text-white transition-colors"
-                                title="Kapat (Esc)"
-                            >
-                                <X size={24} />
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            onClick={() => void handleDownloadExcel()}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-[11px] font-semibold"
+                        >
+                            <Download size={13} />
+                            Excel Indir
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsMinimized(true)}
+                            className="p-1.5 hover:bg-slate-700/50 rounded-lg text-slate-400 hover:text-white transition-colors"
+                            title="Alta Al"
+                        >
+                            <Minus size={16} />
+                        </button>
+                        <button
+                            onClick={onClose}
+                            className="p-1.5 hover:bg-slate-700/50 rounded-lg text-slate-400 hover:text-white transition-colors"
+                            title="Kapat (Esc)"
+                        >
+                            <X size={20} />
+                        </button>
                     </div>
                 </div>
 
-                {/* ── Filter toolbar ── */}
-                <div className="px-4 py-2.5 border-b border-slate-700/60 bg-slate-800/30 flex items-center gap-3 flex-wrap">
-                    <div className="flex items-center gap-1.5">
-                        <Calendar size={14} className="text-slate-500" />
+                {/* ── Compact Filter + Summary Row ── */}
+                <div className="px-3 py-1.5 border-b border-slate-700/60 bg-slate-800/30 flex items-center gap-3">
+                    {/* Filters */}
+                    <div className="flex items-center gap-1">
+                        <Calendar size={12} className="text-slate-500" />
                         <input
                             type="date"
                             value={dateFrom}
                             onChange={(e) => setDateFrom(e.target.value)}
                             max={dateTo || undefined}
-                            className="bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 w-[130px]"
+                            className="bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[11px] text-white focus:outline-none focus:border-blue-500 w-[120px]"
                             title="Baslangic tarihi"
                         />
-                        <span className="text-slate-500 text-xs">-</span>
+                        <span className="text-slate-600 text-[10px]">-</span>
                         <input
                             type="date"
                             value={dateTo}
                             onChange={(e) => setDateTo(e.target.value)}
                             min={dateFrom || undefined}
-                            className="bg-slate-900 border border-slate-700 rounded px-2 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500 w-[130px]"
+                            className="bg-slate-900 border border-slate-700 rounded px-1.5 py-1 text-[11px] text-white focus:outline-none focus:border-blue-500 w-[120px]"
                             title="Bitis tarihi"
                         />
                     </div>
-                    <div className="relative flex items-center gap-1.5 flex-1 max-w-xs">
-                        <Search size={14} className="text-slate-500" />
+                    <div className="relative flex items-center gap-1 flex-1 max-w-[260px]">
+                        <Search size={12} className="text-slate-500" />
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Ara... (fis no, aciklama, tutar, * destekli)"
-                            className="w-full bg-slate-900 border border-slate-700 rounded px-2 py-1.5 pr-7 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                            className="w-full bg-slate-900 border border-slate-700 rounded px-1.5 py-1 pr-6 text-[11px] text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
                         />
                         {searchQuery && (
                             <button
@@ -646,7 +642,7 @@ export default function AccountStatementModal({
                                 className="absolute right-1.5 text-slate-500 hover:text-white transition-colors"
                                 title="Aramayi temizle"
                             >
-                                <X size={12} />
+                                <X size={10} />
                             </button>
                         )}
                     </div>
@@ -654,31 +650,31 @@ export default function AccountStatementModal({
                         <button
                             type="button"
                             onClick={clearFilters}
-                            className="px-2 py-1 rounded border border-slate-600 text-slate-400 hover:text-white hover:border-slate-400 transition-colors text-[11px] font-semibold"
+                            className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400 hover:text-white hover:border-slate-400 transition-colors text-[10px] font-semibold"
                         >
                             Temizle
                         </button>
                     )}
-                    <span className="text-[11px] text-slate-500 ml-auto">
-                        {filteredSortedTransactions.length} / {account.transactions.length} hareket
-                    </span>
-                </div>
 
-                {/* ── Summary cards ── */}
-                <div className="grid grid-cols-3 gap-px bg-slate-700 p-px">
-                    <div className="bg-[#0f172a] p-3">
-                        <p className="text-slate-500 text-xs font-bold uppercase mb-1">Toplam Borc TL</p>
-                        <p className="text-base font-bold text-emerald-400">{formatCurrency(account.totalDebit)}</p>
-                    </div>
-                    <div className="bg-[#0f172a] p-3">
-                        <p className="text-slate-500 text-xs font-bold uppercase mb-1">Toplam Alacak TL</p>
-                        <p className="text-base font-bold text-rose-400">{formatCurrency(account.totalCredit)}</p>
-                    </div>
-                    <div className="bg-[#0f172a] p-3">
-                        <p className="text-slate-500 text-xs font-bold uppercase mb-1">Bakiye TL</p>
-                        <p className={`text-base font-bold ${account.balance >= 0 ? 'text-blue-400' : 'text-amber-400'}`}>
-                            {formatCurrency(Math.abs(account.balance))} {account.balance >= 0 ? '(B)' : '(A)'}
-                        </p>
+                    {/* Inline Summary Totals */}
+                    <div className="flex items-center gap-4 ml-auto">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold">Toplam Borc TL</span>
+                            <span className="text-xs font-bold text-emerald-400">{formatCurrency(account.totalDebit)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold">Toplam Alacak TL</span>
+                            <span className="text-xs font-bold text-rose-400">{formatCurrency(account.totalCredit)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] text-slate-500 uppercase font-semibold">Bakiye TL</span>
+                            <span className={`text-xs font-bold ${account.balance >= 0 ? 'text-blue-400' : 'text-amber-400'}`}>
+                                {formatCurrency(Math.abs(account.balance))} {account.balance >= 0 ? '(B)' : '(A)'}
+                            </span>
+                        </div>
+                        <span className="text-[10px] text-slate-500">
+                            {filteredSortedTransactions.length}/{account.transactions.length} hareket
+                        </span>
                     </div>
                 </div>
 
@@ -861,8 +857,7 @@ export default function AccountStatementModal({
                     </table>
                 </div>
 
-                {/* ── Footer ── */}
-                <div className="p-4 border-t border-slate-700 bg-slate-800/30 text-xs text-slate-500">
+                <div className="px-3 py-1.5 border-t border-slate-700 bg-slate-800/30 text-[11px] text-slate-500">
                     {hasActiveFilters
                         ? `${filteredSortedTransactions.length} / ${account.transactionCount} hareket gösteriliyor (filtrelendi)`
                         : `Toplam ${account.transactionCount} hareket listelendi.`}
