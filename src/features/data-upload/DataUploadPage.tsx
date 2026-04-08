@@ -328,26 +328,24 @@ export default function DataUploadPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Veri Yükleme Merkezi</h1>
-                    <p className="text-slate-400 text-sm">
-                        Bu ekrana yüklenen dosyalar firma bazlı olarak tüm modüllerde kullanılır.
-                    </p>
-                    <p className="text-xs text-blue-300 mt-1">{activeCompany.name}</p>
+            <div className="flex items-center justify-between gap-3 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl">
+                <div className="flex items-center gap-2.5">
+                    <h1 className="text-sm font-bold text-white uppercase tracking-wide">Veri Yukleme</h1>
+                    <div className="h-4 w-px bg-slate-700" />
+                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20 text-xs">{activeCompany.name}</span>
                 </div>
 
                 <Button
                     variant="danger"
                     size="sm"
-                    leftIcon={<RefreshCcw size={14} />}
+                    leftIcon={<RefreshCcw size={12} />}
                     onClick={() => {
                         if (window.confirm('Firma verilerini sıfırlamak istiyor musunuz?')) {
                             void resetCompanyData();
                         }
                     }}
                 >
-                    Firma Verilerini Sıfırla
+                    Sifirla
                 </Button>
             </div>
 

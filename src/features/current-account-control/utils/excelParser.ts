@@ -83,14 +83,22 @@ const parseDate = (value: any): Date | null => {
     }
 
     if (typeof value === 'number') {
-        const excelEpochUtc = Date.UTC(1899, 11, 30);
-        const date = new Date(excelEpochUtc + Math.round(value * 86400 * 1000));
-        return Number.isNaN(date.getTime()) ? null : date;
+        /* Excel serial number: any positive number is a candidate.
+         * Valid range for practical dates: 1 (1900-01-01) to ~80000 (2118).
+         * Previously only 20000-80000 was accepted, which could reject
+         * legitimate serial numbers for older dates. */
+        if (Number.isFinite(value) && value >= 1 && value < 80000) {
+            const excelEpochUtc = Date.UTC(1899, 11, 30);
+            const date = new Date(excelEpochUtc + Math.round(value * 86400 * 1000));
+            if (!Number.isNaN(date.getTime())) return date;
+        }
+        return null;
     }
 
     const raw = String(value).trim();
     if (!raw) return null;
 
+    /* dd.mm.yyyy or dd/mm/yyyy or dd-mm-yyyy  (day and month can be 1 or 2 digits) */
     const ddMmYyyy = raw.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})(?:\D.*)?$/);
     if (ddMmYyyy) {
         const year = ddMmYyyy[3].length === 2 ? Number(`20${ddMmYyyy[3]}`) : Number(ddMmYyyy[3]);
@@ -100,6 +108,7 @@ const parseDate = (value: any): Date | null => {
         if (date) return date;
     }
 
+    /* yyyy-mm-dd (ISO-like) */
     const yyyyMmDd = raw.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s].*)?$/);
     if (yyyyMmDd) {
         const year = Number(yyyyMmDd[1]);
@@ -109,10 +118,11 @@ const parseDate = (value: any): Date | null => {
         if (date) return date;
     }
 
+    /* String that looks like a pure numeric serial, e.g. "45658" */
     const serialLike = raw.replace(',', '.');
     if (/^\d{4,6}(?:\.\d+)?$/.test(serialLike)) {
         const serial = Number(serialLike);
-        if (Number.isFinite(serial) && serial > 20000 && serial < 80000) {
+        if (Number.isFinite(serial) && serial >= 1 && serial < 80000) {
             const excelEpochUtc = Date.UTC(1899, 11, 30);
             const date = new Date(excelEpochUtc + Math.round(serial * 86400 * 1000));
             if (!Number.isNaN(date.getTime())) {
@@ -170,7 +180,7 @@ export const parseExcelDataDetailed = async (
         reader.onload = (e) => {
             try {
                 const data = new Uint8Array(e.target?.result as ArrayBuffer);
-                const workbook = XLSX.read(data, { type: 'array' });
+                const workbook = XLSX.read(data, { type: 'array', cellDates: true });
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const rows = XLSX.utils.sheet_to_json(worksheet, {
                     header: 1,

@@ -69,12 +69,10 @@ export default function KebirAnalysisPage() {
 
     return (
         <div className="space-y-6">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-white mb-2">Kebir Analizi & Ücret Hesaplama</h1>
-                <div className="flex items-center gap-2 text-slate-400 text-sm">
-                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">{activeCompany.name}</span>
-                    <span>için analiz yapılıyor</span>
-                </div>
+            <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl">
+                <h1 className="text-sm font-bold text-white uppercase tracking-wide">Kebir Analizi</h1>
+                <div className="h-4 w-px bg-slate-700" />
+                <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20 text-xs">{activeCompany.name}</span>
             </div>
 
             {loading && (

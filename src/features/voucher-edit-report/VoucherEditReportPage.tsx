@@ -1,6 +1,6 @@
 import { Download, FileClock, Layers, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Card } from '../../components/common/Card';
+
 import { useCompany } from '../../context/CompanyContext';
 import type { AccountDetail, MappingConfig, VoucherEditLogEntry, VoucherEditSource } from '../common/types';
 import { filterCurrentAccountScopeData, undoVoucherEditOnAccounts } from '../common/voucherEditService';
@@ -298,102 +298,100 @@ export default function VoucherEditReportPage() {
     };
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Fis Duzenleme Raporu</h1>
-                    <p className="text-slate-400 text-sm">
-                        Fis satirlarinda yapilan tum degisiklikleri goruntuleyin, disari alin veya temizleyin.
-                    </p>
-                    <p className="text-xs text-blue-300 mt-1">{activeCompany.name}</p>
+        <div className="animate-fade-in flex flex-col gap-0">
+            {/* ── Compact Toolbar Row 1: Title + Actions ── */}
+            <div className="flex items-center justify-between gap-3 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl flex-wrap">
+                <div className="flex items-center gap-2.5">
+                    <h1 className="text-sm font-bold text-white uppercase tracking-wide">Fis Duzenleme Raporu</h1>
+                    <div className="h-4 w-px bg-slate-700" />
+                    <span className="text-xs text-slate-400">{logs.length} kayit</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                     <button
                         type="button"
                         onClick={() => void exportExcel()}
                         disabled={filteredLogs.length === 0}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-[11px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Download size={14} />
-                        Excel Indir
+                        <Download size={13} />
+                        Excel
                     </button>
                     <button
                         type="button"
                         onClick={() => void undoSelected()}
                         disabled={selectedUndoableLogs.length === 0 || isBusy}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/10 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/10 transition-colors text-[11px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <FileClock size={14} />
-                        Secili Geri Al ({selectedUndoableLogs.length})
+                        <FileClock size={12} />
+                        Geri Al ({selectedUndoableLogs.length})
                     </button>
                     <button
                         type="button"
                         onClick={() => void undoBulk()}
                         disabled={filteredUndoableLogs.length === 0 || isBusy}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/10 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-500/40 text-emerald-200 hover:bg-emerald-500/10 transition-colors text-[11px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <FileClock size={14} />
-                        Toplu Geri Al ({filteredUndoableLogs.length})
+                        <FileClock size={12} />
+                        Toplu ({filteredUndoableLogs.length})
                     </button>
                     <button
                         type="button"
                         onClick={() => void removeSelected()}
                         disabled={selectedCount === 0 || isBusy}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-amber-500/40 text-amber-200 hover:bg-amber-500/10 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-amber-500/40 text-amber-200 hover:bg-amber-500/10 transition-colors text-[11px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Trash2 size={14} />
-                        Secili Sil ({selectedCount})
+                        <Trash2 size={12} />
+                        Sil ({selectedCount})
                     </button>
                     <button
                         type="button"
                         onClick={() => void removeAll()}
                         disabled={!logs.length || isBusy}
-                        className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-red-500/40 text-red-200 hover:bg-red-500/10 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-red-500/40 text-red-200 hover:bg-red-500/10 transition-colors text-[11px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Trash2 size={14} />
+                        <Trash2 size={12} />
                         Tumunu Sil
                     </button>
                 </div>
             </div>
 
-            <Card className="space-y-4">
-                <div className="flex items-center justify-between gap-3 flex-wrap">
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <input
-                            value={search}
-                            onChange={(event) => setSearch(event.target.value)}
-                            placeholder="Fis no, hesap, alan, aciklama ara..."
-                            className="w-72 max-w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                        />
-                        <select
-                            value={sourceFilter}
-                            onChange={(event) => setSourceFilter(event.target.value as SourceFilter)}
-                            className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500"
-                        >
-                            <option value="ALL">Tum Kaynaklar</option>
-                            <option value="FIRMA">Firma</option>
-                            <option value="SMMM">SMMM</option>
-                        </select>
-                    </div>
-                    <div className="flex items-center gap-2 text-xs">
-                        <button
-                            type="button"
-                            onClick={() => void removeBySource('FIRMA')}
-                            disabled={isBusy}
-                            className="px-3 py-1.5 rounded border border-slate-600 text-slate-300 hover:border-red-400/50 hover:text-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            Firma Kayitlarini Sil
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => void removeBySource('SMMM')}
-                            disabled={isBusy}
-                            className="px-3 py-1.5 rounded border border-slate-600 text-slate-300 hover:border-red-400/50 hover:text-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                            SMMM Kayitlarini Sil
-                        </button>
-                    </div>
+            {/* ── Compact Toolbar Row 2: Search + Filters ── */}
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/20 border-b border-slate-700/40">
+                <input
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Fis no, hesap, alan, aciklama ara..."
+                    className="w-64 max-w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-[11px] text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                />
+                <select
+                    value={sourceFilter}
+                    onChange={(event) => setSourceFilter(event.target.value as SourceFilter)}
+                    className="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-[11px] text-white focus:outline-none focus:border-blue-500"
+                    title="Kaynak filtresi"
+                >
+                    <option value="ALL">Tum Kaynaklar</option>
+                    <option value="FIRMA">Firma</option>
+                    <option value="SMMM">SMMM</option>
+                </select>
+                <div className="ml-auto flex items-center gap-1.5">
+                    <button
+                        type="button"
+                        onClick={() => void removeBySource('FIRMA')}
+                        disabled={isBusy}
+                        className="px-2 py-1 rounded border border-slate-600 text-slate-300 hover:border-red-400/50 hover:text-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[10px]"
+                    >
+                        Firma Sil
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => void removeBySource('SMMM')}
+                        disabled={isBusy}
+                        className="px-2 py-1 rounded border border-slate-600 text-slate-300 hover:border-red-400/50 hover:text-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-[10px]"
+                    >
+                        SMMM Sil
+                    </button>
                 </div>
+            </div>
 
                 {errorMessage && (
                     <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-200">
@@ -510,7 +508,7 @@ export default function VoucherEditReportPage() {
                         </tbody>
                     </table>
                 </div>
-            </Card>
+
         </div>
     );
 }

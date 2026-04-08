@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Building2, Download, Search, UserRound } from 'lucide-react';
-import { Card } from '../../components/common/Card';
+
 import { useCompany } from '../../context/CompanyContext';
 import type { AccountDetail, Company } from '../common/types';
 import VoucherDetailModal, { type VoucherAccountOption, type VoucherDetailRow } from '../mizan/components/VoucherDetailModal';
@@ -304,137 +304,122 @@ function VoucherListContent({ activeCompany }: { activeCompany: Company }) {
     const hasAnyData = firmaData.length > 0 || smmmData.length > 0;
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Fis Listesi Modulu</h1>
-                <p className="text-slate-400 text-sm">
-                    Fisleri tek listede goruntuleyin, tarih araligina gore filtreleyin ve arama ile hizli bulun.
-                </p>
-                <p className="text-xs text-blue-300 mt-1">{activeCompany.name}</p>
-            </div>
-
-            <Card className="space-y-4">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <div>
-                        <h2 className="text-lg font-semibold text-white">Veri Kaynagi Secimi</h2>
-                        <p className="text-xs text-slate-400 mt-1">
-                            Firma secildiginde Firma Kebir dosyasi, SMMM secildiginde SMMM Kebir dosyasi kullanilir.
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setSelectedSource('FIRMA')}
-                            className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${source === 'FIRMA'
-                                ? 'bg-indigo-600 border-indigo-500 text-white'
-                                : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-indigo-400/50'
-                                }`}
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                <Building2 size={14} /> Firma ({firmaData.length})
-                            </span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setSelectedSource('SMMM')}
-                            className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${source === 'SMMM'
-                                ? 'bg-blue-600 border-blue-500 text-white'
-                                : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-blue-400/50'
-                                }`}
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                <UserRound size={14} /> SMMM ({smmmData.length})
-                            </span>
-                        </button>
-                    </div>
+        <div className="animate-fade-in flex flex-col gap-0">
+            {/* ── Compact Toolbar Row 1: Source + Stats ── */}
+            <div className="flex items-center justify-between gap-3 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl">
+                <div className="flex items-center gap-2.5">
+                    <h1 className="text-sm font-bold text-white uppercase tracking-wide">Fis Listesi</h1>
+                    <div className="h-4 w-px bg-slate-700" />
+                    <button
+                        type="button"
+                        onClick={() => setSelectedSource('FIRMA')}
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${source === 'FIRMA'
+                            ? 'bg-indigo-600 border-indigo-500 text-white'
+                            : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-indigo-400/50'
+                            }`}
+                    >
+                        <span className="inline-flex items-center gap-1.5">
+                            <Building2 size={12} /> Firma ({firmaData.length})
+                        </span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setSelectedSource('SMMM')}
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${source === 'SMMM'
+                            ? 'bg-blue-600 border-blue-500 text-white'
+                            : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-blue-400/50'
+                            }`}
+                    >
+                        <span className="inline-flex items-center gap-1.5">
+                            <UserRound size={12} /> SMMM ({smmmData.length})
+                        </span>
+                    </button>
                 </div>
 
-                {!hasAnyData && (
-                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
-                        Fis listesi icin veri bulunamadi. Once Cari Hesap Kontrol modulunde dosyalari isleyin.
+                {sourceData.length > 0 && (
+                    <div className="flex items-center gap-4 text-xs">
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-slate-500">Fis</span>
+                            <span className="text-white font-semibold">{visibleVoucherRows.length}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-slate-500">Satir</span>
+                            <span className="text-white font-semibold">{summary.totalRows}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-slate-500">Borc</span>
+                            <span className="text-emerald-300 font-semibold">{formatCurrency(summary.totalDebit)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <span className="text-slate-500">Alacak</span>
+                            <span className="text-rose-300 font-semibold">{formatCurrency(summary.totalCredit)}</span>
+                        </div>
                     </div>
                 )}
+            </div>
 
-                {hasAnyData && sourceData.length === 0 && (
-                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
-                        Secili kaynakta veri yok. Ustten diger kaynagi secin.
-                    </div>
-                )}
-            </Card>
+            {!hasAnyData && (
+                <div className="mx-3 mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                    Fis listesi icin veri bulunamadi. Once Cari Hesap Kontrol modulunde dosyalari isleyin.
+                </div>
+            )}
+
+            {hasAnyData && sourceData.length === 0 && (
+                <div className="mx-3 mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                    Secili kaynakta veri yok. Ustten diger kaynagi secin.
+                </div>
+            )}
 
             {sourceData.length > 0 && (
-                <Card className="space-y-4">
-                    <div className="flex items-center justify-between gap-4 flex-wrap">
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
-                            <div className="rounded-lg bg-slate-900/50 border border-slate-700 px-3 py-2">
-                                <p className="text-slate-500">Gorunen fis</p>
-                                <p className="text-white font-semibold text-sm">{visibleVoucherRows.length}</p>
-                            </div>
-                            <div className="rounded-lg bg-slate-900/50 border border-slate-700 px-3 py-2">
-                                <p className="text-slate-500">Toplam satir</p>
-                                <p className="text-white font-semibold text-sm">{summary.totalRows}</p>
-                            </div>
-                            <div className="rounded-lg bg-slate-900/50 border border-slate-700 px-3 py-2">
-                                <p className="text-slate-500">Toplam borc</p>
-                                <p className="text-emerald-300 font-semibold text-sm">{formatCurrency(summary.totalDebit)}</p>
-                            </div>
-                            <div className="rounded-lg bg-slate-900/50 border border-slate-700 px-3 py-2">
-                                <p className="text-slate-500">Toplam alacak</p>
-                                <p className="text-rose-300 font-semibold text-sm">{formatCurrency(summary.totalCredit)}</p>
-                            </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 w-full sm:w-auto">
-                            <input
-                                type="date"
-                                value={dateFrom}
-                                onChange={(event) => setDateFrom(event.target.value)}
-                                max={dateTo || undefined}
-                                className="h-10 px-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-                                title="Baslangic tarihi"
-                            />
-                            <input
-                                type="date"
-                                value={dateTo}
-                                onChange={(event) => setDateTo(event.target.value)}
-                                min={dateFrom || undefined}
-                                className="h-10 px-3 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-200 focus:outline-none focus:border-blue-500"
-                                title="Bitis tarihi"
-                            />
+                <>
+                    {/* ── Compact Toolbar Row 2: Filters + Search + Excel ── */}
+                    <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-800/20 border-b border-slate-700/40">
+                        <input
+                            type="date"
+                            value={dateFrom}
+                            onChange={(event) => setDateFrom(event.target.value)}
+                            max={dateTo || undefined}
+                            className="px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-[11px] text-slate-200 focus:outline-none focus:border-blue-500 w-[120px]"
+                            title="Baslangic tarihi"
+                        />
+                        <input
+                            type="date"
+                            value={dateTo}
+                            onChange={(event) => setDateTo(event.target.value)}
+                            min={dateFrom || undefined}
+                            className="px-2 py-1.5 bg-slate-900 border border-slate-700 rounded-lg text-[11px] text-slate-200 focus:outline-none focus:border-blue-500 w-[120px]"
+                            title="Bitis tarihi"
+                        />
+                        {(dateFrom || dateTo) && (
                             <button
                                 type="button"
-                                onClick={() => {
-                                    setDateFrom('');
-                                    setDateTo('');
-                                }}
-                                disabled={!dateFrom && !dateTo}
-                                className="h-10 px-3 rounded-lg border border-slate-700 bg-slate-900/60 text-xs font-semibold text-slate-300 hover:border-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                onClick={() => { setDateFrom(''); setDateTo(''); }}
+                                className="px-2 py-1 rounded-lg border border-slate-700 bg-slate-900/60 text-[10px] font-semibold text-slate-300 hover:border-slate-500 transition-colors"
                             >
                                 Tarih Temizle
                             </button>
+                        )}
 
-                            <div className="relative w-full sm:w-80">
-                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-                                <input
-                                    type="text"
-                                    value={search}
-                                    onChange={(event) => setSearch(event.target.value)}
-                                    placeholder="Fis no, evrak, aciklama, hesap ara..."
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
-                                />
-                            </div>
-
-                            <button
-                                type="button"
-                                onClick={() => void handleDownloadExcel()}
-                                disabled={visibleVoucherRows.length === 0 || hasInvalidDateRange}
-                                className="h-10 inline-flex items-center gap-1.5 px-3 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-xs font-semibold disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                            >
-                                <Download size={14} />
-                                Excel Indir
-                            </button>
+                        <div className="relative flex-1 max-w-xs">
+                            <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={(event) => setSearch(event.target.value)}
+                                placeholder="Fis no, evrak, aciklama, hesap ara..."
+                                className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-[11px] text-white placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                            />
                         </div>
+
+                        <button
+                            type="button"
+                            onClick={() => void handleDownloadExcel()}
+                            disabled={visibleVoucherRows.length === 0 || hasInvalidDateRange}
+                            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-[11px] font-semibold disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap ml-auto"
+                        >
+                            <Download size={13} />
+                            Excel Indir
+                        </button>
                     </div>
 
                     <div className="overflow-auto rounded-xl border border-slate-700 bg-slate-900/40">
@@ -500,7 +485,7 @@ function VoucherListContent({ activeCompany }: { activeCompany: Company }) {
                             </tbody>
                         </table>
                     </div>
-                </Card>
+                </> /* Fragment close */
             )}
 
             <VoucherDetailModal

@@ -1156,105 +1156,87 @@ function TemporaryTaxContent({ activeCompany }: { activeCompany: Company }) {
     const hasAnyData = firmaData.length > 0 || smmmData.length > 0;
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Gecici Vergi Modulu</h1>
-                <p className="text-slate-400 text-sm">
-                    Kontrol kartlarini tiklayarak riskli hesaplari listeleyin. Her kart yeni kontrol eklenebilir yapidadir.
-                </p>
-                <p className="text-xs text-blue-300 mt-1">{activeCompany.name}</p>
-            </div>
-
-            <Card className="space-y-4">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <div>
-                        <h2 className="text-lg font-semibold text-white">Veri Kaynagi Secimi</h2>
-                        <p className="text-xs text-slate-400 mt-1">
-                            Firma secildiginde Firma Kebir dosyasi, SMMM secildiginde SMMM Kebir dosyasi kullanilir.
-                        </p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <button
-                            type="button"
-                            onClick={() => setSelectedSource('FIRMA')}
-                            className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${source === 'FIRMA'
-                                ? 'bg-indigo-600 border-indigo-500 text-white'
-                                : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-indigo-400/50'
-                                }`}
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                <Building2 size={14} /> Firma ({firmaData.length})
-                            </span>
-                        </button>
-                        <button
-                            type="button"
-                            onClick={() => setSelectedSource('SMMM')}
-                            className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${source === 'SMMM'
-                                ? 'bg-blue-600 border-blue-500 text-white'
-                                : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-blue-400/50'
-                                }`}
-                        >
-                            <span className="inline-flex items-center gap-2">
-                                <UserRound size={14} /> SMMM ({smmmData.length})
-                            </span>
-                        </button>
-                    </div>
-                </div>
-
-                {!hasAnyData && (
-                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
-                        Gecici vergi kontrolu icin veri bulunamadi. Once Cari Hesap Kontrol modulunde dosyalari isleyin.
-                    </div>
-                )}
-
-                {hasAnyData && sourceData.length === 0 && (
-                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4 text-sm text-amber-200">
-                        Secili kaynakta veri yok. Ustten diger kaynagi secin.
-                    </div>
-                )}
-
-                {sourceData.length > 0 && (
-                    <div className="rounded-lg border border-slate-700 bg-slate-900/40 p-3">
-                        <div className="flex items-center justify-between gap-3 flex-wrap">
-                            <div>
-                                <p className="text-xs text-slate-400 mb-2">Alt Modul</p>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveSubModule('CONTROL')}
-                                        className={`px-3 py-1.5 rounded-md border text-xs font-semibold transition-colors ${activeSubModule === 'CONTROL'
-                                            ? 'bg-blue-600/20 border-blue-500/40 text-blue-200'
-                                            : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-blue-500/40'
-                                            }`}
-                                    >
-                                        Kontrol
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveSubModule('PROFIT_LOSS')}
-                                        className={`px-3 py-1.5 rounded-md border text-xs font-semibold transition-colors ${activeSubModule === 'PROFIT_LOSS'
-                                            ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-200'
-                                            : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-emerald-500/40'
-                                            }`}
-                                    >
-                                        Kar/Zarar
-                                    </button>
-                                </div>
-                            </div>
+        <div className="animate-fade-in flex flex-col gap-0">
+            {/* ── Compact Toolbar: Source + SubModule + Excel ── */}
+            <div className="flex items-center justify-between gap-3 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl flex-wrap">
+                <div className="flex items-center gap-2.5">
+                    <h1 className="text-sm font-bold text-white uppercase tracking-wide">Gecici Vergi</h1>
+                    <div className="h-4 w-px bg-slate-700" />
+                    <button
+                        type="button"
+                        onClick={() => setSelectedSource('FIRMA')}
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${source === 'FIRMA'
+                            ? 'bg-indigo-600 border-indigo-500 text-white'
+                            : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-indigo-400/50'
+                            }`}
+                    >
+                        <span className="inline-flex items-center gap-1.5">
+                            <Building2 size={12} /> Firma ({firmaData.length})
+                        </span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setSelectedSource('SMMM')}
+                        className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${source === 'SMMM'
+                            ? 'bg-blue-600 border-blue-500 text-white'
+                            : 'bg-slate-900/50 border-slate-700 text-slate-300 hover:border-blue-400/50'
+                            }`}
+                    >
+                        <span className="inline-flex items-center gap-1.5">
+                            <UserRound size={12} /> SMMM ({smmmData.length})
+                        </span>
+                    </button>
+                    {sourceData.length > 0 && (
+                        <>
+                            <div className="h-4 w-px bg-slate-700" />
                             <button
                                 type="button"
-                                onClick={() => void handleDownloadTemporaryTaxExcel()}
-                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-600 text-sm text-slate-200 hover:border-blue-500/50 hover:text-blue-200 transition-colors"
-                                title="Gecici vergi ciktisini Excel olarak indir"
+                                onClick={() => setActiveSubModule('CONTROL')}
+                                className={`px-2.5 py-1.5 rounded-md border text-[11px] font-semibold transition-colors ${activeSubModule === 'CONTROL'
+                                    ? 'bg-blue-600/20 border-blue-500/40 text-blue-200'
+                                    : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-blue-500/40'
+                                    }`}
                             >
-                                <Download size={14} />
-                                Excel Indir
+                                Kontrol
                             </button>
-                        </div>
-                    </div>
+                            <button
+                                type="button"
+                                onClick={() => setActiveSubModule('PROFIT_LOSS')}
+                                className={`px-2.5 py-1.5 rounded-md border text-[11px] font-semibold transition-colors ${activeSubModule === 'PROFIT_LOSS'
+                                    ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-200'
+                                    : 'bg-slate-900 border-slate-700 text-slate-300 hover:border-emerald-500/40'
+                                    }`}
+                            >
+                                Kar/Zarar
+                            </button>
+                        </>
+                    )}
+                </div>
+
+                {sourceData.length > 0 && (
+                    <button
+                        type="button"
+                        onClick={() => void handleDownloadTemporaryTaxExcel()}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-500/40 text-blue-200 hover:bg-blue-500/10 transition-colors text-[11px] font-semibold whitespace-nowrap"
+                        title="Gecici vergi ciktisini Excel olarak indir"
+                    >
+                        <Download size={13} />
+                        Excel Indir
+                    </button>
                 )}
-            </Card>
+            </div>
+
+            {!hasAnyData && (
+                <div className="mx-3 mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                    Gecici vergi kontrolu icin veri bulunamadi. Once Cari Hesap Kontrol modulunde dosyalari isleyin.
+                </div>
+            )}
+
+            {hasAnyData && sourceData.length === 0 && (
+                <div className="mx-3 mt-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-200">
+                    Secili kaynakta veri yok. Ustten diger kaynagi secin.
+                </div>
+            )}
 
             {sourceData.length > 0 && activeSubModule === 'CONTROL' && (
                 <Card className="space-y-5">

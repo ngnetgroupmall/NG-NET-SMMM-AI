@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState, type DragEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { AlertCircle, FileArchive, Layers, RefreshCcw, Trash2, Upload } from 'lucide-react';
+import { AlertCircle, Layers, RefreshCcw, Trash2, Upload } from 'lucide-react';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { useCompany } from '../../context/CompanyContext';
@@ -123,22 +123,17 @@ export default function FaturaXmlPage() {
 
     return (
         <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                        <FileArchive className="text-blue-400" size={28} />
-                        Fatura XML Aktarimi
-                    </h1>
-                    <p className="text-slate-400 text-sm">
-                        ZIP, RAR, 7Z veya XML arsivlerini isleyip Excel raporu uretebilirsiniz.
-                    </p>
-                    <p className="text-xs text-blue-300 mt-1">{activeCompany.name}</p>
+            <div className="flex items-center justify-between gap-3 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl flex-wrap">
+                <div className="flex items-center gap-2.5">
+                    <h1 className="text-sm font-bold text-white uppercase tracking-wide">Fatura XML</h1>
+                    <div className="h-4 w-px bg-slate-700" />
+                    <span className="px-2 py-0.5 bg-blue-500/10 text-blue-400 rounded border border-blue-500/20 text-xs">{activeCompany.name}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                     <Button
                         variant="secondary"
                         size="sm"
-                        leftIcon={<RefreshCcw size={14} />}
+                        leftIcon={<RefreshCcw size={12} />}
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isProcessing}
                     >
@@ -147,22 +142,22 @@ export default function FaturaXmlPage() {
                     <Button
                         variant="secondary"
                         size="sm"
-                        leftIcon={<Upload size={14} />}
+                        leftIcon={<Upload size={12} />}
                         onClick={downloadExcel}
                         disabled={!moduleData || moduleData.excelRows.length === 0}
                     >
-                        Excel indir
+                        Excel
                     </Button>
                     <Button
                         variant="danger"
                         size="sm"
-                        leftIcon={<Trash2 size={14} />}
+                        leftIcon={<Trash2 size={12} />}
                         onClick={() => {
                             void clearStoredData();
                         }}
                         disabled={!moduleData}
                     >
-                        Kaydi temizle
+                        Temizle
                     </Button>
                 </div>
             </div>

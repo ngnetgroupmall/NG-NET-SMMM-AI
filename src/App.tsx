@@ -233,7 +233,9 @@ export default function App() {
 
       {activeTab === 'reports' && (
         <div className="space-y-6 animate-fade-in">
-          <h1 className="text-3xl font-bold text-white">Rapor Geçmişi</h1>
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl mb-4">
+            <h1 className="text-sm font-bold text-white uppercase tracking-wide">Rapor Gecmisi</h1>
+          </div>
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-8 text-center">
             <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center mb-4 mx-auto">
               <Layers className="text-slate-500 w-10 h-10" />
@@ -246,7 +248,9 @@ export default function App() {
 
       {activeTab === 'support' && (
         <div className="space-y-6 animate-fade-in">
-          <h1 className="text-3xl font-bold text-white">Destek Merkezi</h1>
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl mb-4">
+            <h1 className="text-sm font-bold text-white uppercase tracking-wide">Destek Merkezi</h1>
+          </div>
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-8 text-center">
             <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center mb-4 mx-auto">
               <Layers className="text-blue-500 w-10 h-10" />
@@ -260,7 +264,9 @@ export default function App() {
 
       {activeTab === 'settings' && (
         <div className="space-y-6 animate-fade-in">
-          <h1 className="text-3xl font-bold text-white">Ayarlar</h1>
+          <div className="flex items-center gap-2.5 px-3 py-2 bg-slate-800/40 border-b border-slate-700/60 rounded-t-xl mb-4">
+            <h1 className="text-sm font-bold text-white uppercase tracking-wide">Ayarlar</h1>
+          </div>
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-8 text-center">
             <div className="w-20 h-20 bg-slate-700/50 rounded-full flex items-center justify-center mb-4 mx-auto">
               <Layers className="text-slate-500 w-10 h-10" />
