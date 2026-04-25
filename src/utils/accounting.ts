@@ -40,13 +40,19 @@ export const toValidCalendarDate = (year: number, month: number, day: number): D
 export const parseTransactionDate = (value: Date | string | number | null | undefined): Date | null => {
     if (value === null || value === undefined || value === '') return null;
     if (value instanceof Date) {
-        return Number.isNaN(value.getTime()) ? null : value;
+        // TIMEZONE FIX: If the Date came from XLSX cellDates:true it is UTC midnight.
+        // Rebuild as local noon date using UTC components to avoid 1-day shift in UTC+ zones.
+        if (Number.isNaN(value.getTime())) return null;
+        return toValidCalendarDate(value.getUTCFullYear(), value.getUTCMonth() + 1, value.getUTCDate());
     }
 
     if (typeof value === 'number') {
+        // TIMEZONE FIX: Excel serials denote a calendar day, not a UTC instant.
+        // Extract UTC components from the epoch-shifted date to avoid DST/timezone drift.
         const excelEpochUtc = Date.UTC(1899, 11, 30);
-        const date = new Date(excelEpochUtc + Math.round(value * 86400 * 1000));
-        return Number.isNaN(date.getTime()) ? null : date;
+        const utcDate = new Date(excelEpochUtc + Math.round(value * 86400 * 1000));
+        if (Number.isNaN(utcDate.getTime())) return null;
+        return toValidCalendarDate(utcDate.getUTCFullYear(), utcDate.getUTCMonth() + 1, utcDate.getUTCDate());
     }
 
     const raw = String(value).trim();
@@ -79,22 +85,25 @@ export const parseTransactionDate = (value: Date | string | number | null | unde
         if (date) return date;
     }
 
-    // Try Excel serial number
+    // Try Excel serial number as string
     const serialLike = raw.replace(',', '.');
     if (/^\d{4,6}(?:\.\d+)?$/.test(serialLike)) {
         const serial = Number(serialLike);
         if (Number.isFinite(serial) && serial > 20000 && serial < 80000) {
             const excelEpochUtc = Date.UTC(1899, 11, 30);
-            const date = new Date(excelEpochUtc + Math.round(serial * 86400 * 1000));
-            if (!Number.isNaN(date.getTime())) {
-                return date;
+            const utcDate = new Date(excelEpochUtc + Math.round(serial * 86400 * 1000));
+            if (!Number.isNaN(utcDate.getTime())) {
+                return toValidCalendarDate(utcDate.getUTCFullYear(), utcDate.getUTCMonth() + 1, utcDate.getUTCDate());
             }
         }
     }
 
-    // Fallback: native Date constructor
+    // TIMEZONE FIX: new Date(raw) parses bare date strings ("2025-11-24") as UTC midnight,
+    // causing a 1-day shift in UTC+ timezones. Extract UTC components instead.
     const parsed = new Date(raw);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
+    if (Number.isNaN(parsed.getTime())) return null;
+    if (/[T\s]\d{2}:|[+-]\d{2}:/.test(raw)) return parsed; // has explicit time/offset → trust as-is
+    return toValidCalendarDate(parsed.getUTCFullYear(), parsed.getUTCMonth() + 1, parsed.getUTCDate());
 };
 
 /** Check whether a date falls within a given range */

@@ -127,19 +127,21 @@ export const parseKebirFile = async (file: File): Promise<KebirAnalysisResult> =
                         if (sampleDates.length < 5 && v) sampleDates.push(String(v));
 
                         if (v instanceof Date && !isNaN(v.getTime())) {
-                            m = v.getMonth();
-                            rowDate = v;
+                            // TIMEZONE FIX: cellDates:true returns UTC midnight; getMonth() gives
+                            // the previous day in UTC+ zones. Use UTC components to rebuild local date.
+                            m = v.getUTCMonth();
+                            rowDate = new Date(v.getUTCFullYear(), v.getUTCMonth(), v.getUTCDate(), 12, 0, 0, 0);
                         } else if (v) {
                             const s = String(v).trim();
                             const dm = s.match(/^(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})/);
                             if (dm) {
                                 m = parseInt(dm[2]) - 1;
-                                rowDate = new Date(parseInt(dm[3]), m, parseInt(dm[1]));
+                                rowDate = new Date(parseInt(dm[3]), m, parseInt(dm[1]), 12, 0, 0, 0);
                             } else {
                                 const ymd = s.match(/^(\d{4})[./-](\d{1,2})[./-](\d{1,2})/);
                                 if (ymd) {
                                     m = parseInt(ymd[2]) - 1;
-                                    rowDate = new Date(parseInt(ymd[1]), m, parseInt(ymd[3]));
+                                    rowDate = new Date(parseInt(ymd[1]), m, parseInt(ymd[3]), 12, 0, 0, 0);
                                 }
                             }
                         }

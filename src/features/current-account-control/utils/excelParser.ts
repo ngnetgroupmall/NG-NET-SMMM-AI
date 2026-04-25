@@ -86,11 +86,18 @@ const parseDate = (value: any): Date | null => {
         /* Excel serial number: any positive number is a candidate.
          * Valid range for practical dates: 1 (1900-01-01) to ~80000 (2118).
          * Previously only 20000-80000 was accepted, which could reject
-         * legitimate serial numbers for older dates. */
+         * legitimate serial numbers for older dates.
+         *
+         * TIMEZONE FIX: Excel serials represent a calendar day (no time component).
+         * Converting to UTC midnight then reading with getDate() causes a 1-day shift
+         * in UTC+ timezones (e.g. TR/UTC+3). We extract UTC year/month/day from the
+         * epoch-based Date and rebuild a local-time date at noon to stay timezone-safe. */
         if (Number.isFinite(value) && value >= 1 && value < 80000) {
             const excelEpochUtc = Date.UTC(1899, 11, 30);
-            const date = new Date(excelEpochUtc + Math.round(value * 86400 * 1000));
-            if (!Number.isNaN(date.getTime())) return date;
+            const utcDate = new Date(excelEpochUtc + Math.round(value * 86400 * 1000));
+            if (!Number.isNaN(utcDate.getTime())) {
+                return toValidCalendarDate(utcDate.getUTCFullYear(), utcDate.getUTCMonth() + 1, utcDate.getUTCDate());
+            }
         }
         return null;
     }
@@ -124,15 +131,21 @@ const parseDate = (value: any): Date | null => {
         const serial = Number(serialLike);
         if (Number.isFinite(serial) && serial >= 1 && serial < 80000) {
             const excelEpochUtc = Date.UTC(1899, 11, 30);
-            const date = new Date(excelEpochUtc + Math.round(serial * 86400 * 1000));
-            if (!Number.isNaN(date.getTime())) {
-                return date;
+            const utcDate = new Date(excelEpochUtc + Math.round(serial * 86400 * 1000));
+            if (!Number.isNaN(utcDate.getTime())) {
+                return toValidCalendarDate(utcDate.getUTCFullYear(), utcDate.getUTCMonth() + 1, utcDate.getUTCDate());
             }
         }
     }
 
+    /* TIMEZONE FIX: new Date(raw) parses ISO strings as UTC, which causes a 1-day
+     * shift in UTC+ timezones. Extract UTC components and build a local-time date. */
     const parsed = new Date(raw);
-    return Number.isNaN(parsed.getTime()) ? null : parsed;
+    if (Number.isNaN(parsed.getTime())) return null;
+    // If the string contains a time component or explicit offset, trust the result as-is.
+    // Otherwise (plain date string like "2025-11-24") rebuild from UTC components.
+    if (/[T\s]\d{2}:|[+-]\d{2}:/.test(raw)) return parsed;
+    return toValidCalendarDate(parsed.getUTCFullYear(), parsed.getUTCMonth() + 1, parsed.getUTCDate());
 };
 
 const shouldSkipByName = (name: string): boolean => {

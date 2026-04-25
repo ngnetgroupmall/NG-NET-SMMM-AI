@@ -11,7 +11,13 @@ export const formatCurrency = (value: number): string => {
 /** Format a date as dd.MM.yyyy Turkish locale string */
 export const formatDate = (value: Date | null | undefined): string => {
     if (!value) return '-';
-    return new Date(value).toLocaleDateString('tr-TR');
+    const d = new Date(value);
+    if (Number.isNaN(d.getTime())) return '-';
+    // Use local date components directly to avoid timezone-induced day shift.
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}.${month}.${year}`;
 };
 
 /** Format a number with tr-TR locale, no currency symbol */
